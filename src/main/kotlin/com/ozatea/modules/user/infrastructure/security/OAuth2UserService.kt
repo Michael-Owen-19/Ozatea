@@ -9,7 +9,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User
 import org.springframework.stereotype.Service
 import java.util.*
 
-@Service
+@Service("customOAuth2UserService")
 class OAuth2UserService(
     private val userRepository: UserRepository
 ) : DefaultOAuth2UserService() {
@@ -20,6 +20,7 @@ class OAuth2UserService(
         val email = oAuth2User.attributes["email"] as? String
             ?: throw IllegalArgumentException("Email not found in OAuth2 response")
         val name = oAuth2User.attributes["name"] as? String ?: "User"
+        println("OAuth2UserService called for provider: $provider, email: $email")
 
         var user = userRepository.findByEmailAndProvider(email, AuthProvider.valueOf(provider)).orElse(null)
 

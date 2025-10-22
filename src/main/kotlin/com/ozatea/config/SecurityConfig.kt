@@ -1,6 +1,7 @@
 package com.ozatea.config
 
 import com.ozatea.core.security.JwtTokenFilter
+import com.ozatea.modules.user.infrastructure.security.CustomOidcUserService
 import com.ozatea.modules.user.infrastructure.security.JwtTokenProvider
 import com.ozatea.modules.user.infrastructure.security.OAuth2SuccessHandler
 import com.ozatea.modules.user.infrastructure.security.OAuth2UserService
@@ -19,7 +20,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 class SecurityConfig(
     private val jwtTokenProvider: JwtTokenProvider,
     private val oAuth2UserService: OAuth2UserService,
-    private val oAuth2SuccessHandler: OAuth2SuccessHandler
+    private val oAuth2SuccessHandler: OAuth2SuccessHandler,
+    private val customOidcUserService: CustomOidcUserService
 ) {
 
     @Bean
@@ -33,8 +35,11 @@ class SecurityConfig(
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
             .csrf { it.disable() }
+//            .sessionManagement {
+//                it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//            }
             .sessionManagement {
-                it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                it.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
             }
             .authorizeHttpRequests { auth ->
                 auth
@@ -58,9 +63,12 @@ class SecurityConfig(
             // ✅ OAuth2 login configuration
             .oauth2Login { oauth2 ->
                 oauth2
-                    .userInfoEndpoint { it.userService(oAuth2UserService) }
-                    .defaultSuccessUrl("/", true)
-                    .failureUrl("/login?error=true")
+                    .userInfoEndpoint { userInfo ->
+                        userInfo
+                            .oidcUserService(customOidcUserService) // for OpenID providers (like Google)
+                            .userService(oAuth2UserService)  }
+                    .successHandler(oAuth2SuccessHandler)
+                    .failureUrl("/error")
             }
 
             // ✅ Use sessions for OAuth2 logins
