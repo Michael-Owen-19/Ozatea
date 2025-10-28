@@ -25,7 +25,15 @@ class JwtTokenFilter(
             val token = header.substring(7)
             if (jwtTokenProvider.validateToken(token)) {
                 val username = jwtTokenProvider.getUsername(token)
-                val auth = UsernamePasswordAuthenticationToken(username, null, emptyList())
+                val userId = jwtTokenProvider.getUserId(token)
+
+                val principal = UserPrincipal(
+                    id = userId,
+                    username = username,
+                    password = null,
+                    authorities = emptyList()
+                )
+                val auth = UsernamePasswordAuthenticationToken(principal, null, principal.authorities)
                 auth.details = WebAuthenticationDetailsSource().buildDetails(request)
                 SecurityContextHolder.getContext().authentication = auth
             }

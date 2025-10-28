@@ -1,8 +1,9 @@
 package com.ozatea.modules.product
 
+import com.ozatea.modules.category.domain.CategoryRepository
 import com.ozatea.modules.product.application.ProductService
 import com.ozatea.modules.product.domain.ProductRepository
-import com.ozatea.modules.product.infrastructure.ProductEventPublisher
+import com.ozatea.modules.product.domain.event.ProductEventPublisher
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.modulith.ApplicationModule
@@ -19,8 +20,9 @@ class ProductModuleConfiguration {
     @Bean
     fun productService(
         productRepository: ProductRepository,
+        categoryRepository: CategoryRepository,
         productEventPublisher: ProductEventPublisher
     ): ProductService {
-        return ProductService(productRepository, productEventPublisher)
+        return ProductService(productRepository, categoryRepository, productEventPublisher)
     }
 }

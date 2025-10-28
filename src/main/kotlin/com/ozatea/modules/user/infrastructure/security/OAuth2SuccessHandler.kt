@@ -2,6 +2,8 @@ package com.ozatea.modules.user.infrastructure.security
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ozatea.core.constants.AuthProvider
+import com.ozatea.modules.user.domain.RefreshToken
+import com.ozatea.modules.user.domain.RefreshTokenRepository
 import com.ozatea.modules.user.domain.UserRepository
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -10,11 +12,13 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.security.oauth2.core.user.OAuth2User
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler
 import org.springframework.stereotype.Component
+import java.time.Instant
 
 @Component
 class OAuth2SuccessHandler(
     private val jwtTokenProvider: JwtTokenProvider,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val refreshTokenRepository: RefreshTokenRepository
 ) : AuthenticationSuccessHandler {
 
     override fun onAuthenticationSuccess(
@@ -32,8 +36,19 @@ class OAuth2SuccessHandler(
                 RuntimeException("User not found after OAuth login")
             }
 
-            val accessToken = jwtTokenProvider.createAccessToken(user.username)
-            val refreshToken = jwtTokenProvider.createRefreshToken(user.username)
+            val accessToken = jwtTokenProvider.createAccessToken(user.username, user.id)
+            val refreshToken = jwtTokenProvider.createRefreshToken(user.username, user.id)
+
+            // Remove old tokens
+            refreshTokenRepository.deleteByUsername(user.username)
+
+            refreshTokenRepository.save(
+                RefreshToken(
+                    token = refreshToken,
+                    username = user.username,
+                    expiryDate = Instant.now().plusSeconds(604800)
+                )
+            )
 
             val tokens = mapOf(
                 "accessToken" to accessToken,

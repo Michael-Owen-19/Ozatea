@@ -4,7 +4,7 @@ import jakarta.persistence.*
 import java.time.Instant
 
 @Entity
-@Table(name = "refresh_tokens")
+@Table(name = "refresh_token")
 data class RefreshToken(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,

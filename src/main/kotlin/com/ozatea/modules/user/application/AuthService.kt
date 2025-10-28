@@ -1,5 +1,7 @@
 package com.ozatea.modules.user.application
 
+import com.ozatea.core.constants.AuthProvider
+import com.ozatea.core.constants.ErrorMessage
 import com.ozatea.modules.user.domain.RefreshToken
 import com.ozatea.modules.user.domain.RefreshTokenRepository
 import com.ozatea.modules.user.domain.User
@@ -8,6 +10,7 @@ import com.ozatea.modules.user.infrastructure.security.JwtTokenProvider
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
 
 @Service
@@ -18,24 +21,29 @@ class AuthService(
     private val passwordEncoder: PasswordEncoder
 ) {
 
+    @Transactional
     fun register(username: String, email: String, password: String, name: String): User {
         if (userRepository.findByUsername(username).isPresent)
-            throw RuntimeException("User already exists")
+            throw RuntimeException(ErrorMessage.USERNAME_ALREADY_USED)
+
+        if(userRepository.findByEmailAndProvider(email, AuthProvider.LOCAL).isPresent)
+            throw RuntimeException(ErrorMessage.EMAIL_ALREADY_USED)
 
         val encodedPassword = passwordEncoder.encode(password)
         val user = User(username = username, email = email, password = encodedPassword, name = name)
         return userRepository.save(user)
     }
 
+    @Transactional
     fun login(username: String, password: String): Map<String, String> {
         val user = userRepository.findByUsername(username)
-            .orElseThrow { BadCredentialsException("Username or password is incorrect") }
+            .orElseThrow { BadCredentialsException(ErrorMessage.INVALID_CREDENTIALS) }
 
         if (!passwordEncoder.matches(password, user.password))
-            throw BadCredentialsException("Username or password is incorrect")
+            throw BadCredentialsException(ErrorMessage.INVALID_CREDENTIALS)
 
-        val accessToken = jwtTokenProvider.createAccessToken(username)
-        val refreshToken = jwtTokenProvider.createRefreshToken(username)
+        val accessToken = jwtTokenProvider.createAccessToken(username, user.id)
+        val refreshToken = jwtTokenProvider.createRefreshToken(username, user.id)
 
         // Remove old tokens
         refreshTokenRepository.deleteByUsername(username)
@@ -53,12 +61,15 @@ class AuthService(
 
     fun refresh(refreshToken: String): Map<String, String> {
         val token = refreshTokenRepository.findByToken(refreshToken)
-            .orElseThrow { RuntimeException("Invalid refresh token") }
+            .orElseThrow { RuntimeException(ErrorMessage.INVALID_TOKEN) }
 
         if (token.expiryDate.isBefore(Instant.now()))
-            throw RuntimeException("Refresh token expired")
+            throw RuntimeException(ErrorMessage.TOKEN_EXPIRED)
 
-        val accessToken = jwtTokenProvider.createAccessToken(token.username)
+        val user = userRepository.findByUsername(token.username)
+            .orElseThrow { BadCredentialsException(ErrorMessage.USER_NOT_FOUND) }
+
+        val accessToken = jwtTokenProvider.createAccessToken(token.username, user.id)
         return mapOf("accessToken" to accessToken)
     }
 }

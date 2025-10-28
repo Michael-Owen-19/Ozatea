@@ -15,11 +15,13 @@ class JwtTokenProvider {
     private val validityInMs = 3600000 // 1 hour
     private val refreshValidityInMs = 604800000 // 7 days
 
-    fun createAccessToken(username: String): String {
+    fun createAccessToken(username: String, userId: UUID): String {
         val now = Date()
         val expiry = Date(now.time + validityInMs)
 
+
         val claims = Jwts.claims().setSubject(username)
+        claims["userId"] = userId.toString()
 
         return Jwts.builder()
             .setClaims(claims)
@@ -29,12 +31,13 @@ class JwtTokenProvider {
             .compact()
     }
 
-    fun createRefreshToken(username: String): String {
+    fun createRefreshToken(username: String, userId: UUID): String {
         val now = Date()
         val expiry = Date(now.time + refreshValidityInMs)
 
         return Jwts.builder()
             .setSubject(username)
+            .claim("userId", userId.toString())
             .setIssuedAt(now)
             .setExpiration(expiry)
             .signWith(secretKey, SignatureAlgorithm.HS256)
@@ -59,4 +62,15 @@ class JwtTokenProvider {
             .parseClaimsJws(token)
             .body
             .subject
+
+
+    fun getUserId(token: String): UUID {
+        val claims = Jwts.parserBuilder()
+            .setSigningKey(secretKey)
+            .build()
+            .parseClaimsJws(token)
+            .body
+
+        return claims["userId"].toString().let { UUID.fromString(it) }
+    }
 }

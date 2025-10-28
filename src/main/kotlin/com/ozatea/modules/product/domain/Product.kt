@@ -1,13 +1,11 @@
 package com.ozatea.modules.product.domain
 
+import com.ozatea.core.audit.AuditableEntity
+import com.ozatea.modules.category.domain.Category
 import jakarta.persistence.*
-import org.springframework.data.annotation.CreatedDate
-import org.springframework.data.annotation.LastModifiedDate
-import java.math.BigDecimal
-import java.time.LocalDateTime
 
 @Entity
-@Table(name = "products")
+@Table(name = "product")
 data class Product(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
@@ -17,14 +15,18 @@ data class Product(
 
     var description: String? = null,
 
-    @Column(precision = 15, scale = 2)
-    var basePrice: BigDecimal = BigDecimal.ZERO,
+    var slug: String,
 
-    var imageUrl: String? = null,
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    val category: Category? = null,
 
-    @CreatedDate
-    var createdAt: LocalDateTime? = null,
+    @Column(name = "is_active")
+    val isActive: Boolean = true,
 
-    @LastModifiedDate
-    var updatedAt: LocalDateTime? = null
-)
+    @OneToMany(mappedBy = "product", cascade = [CascadeType.ALL], orphanRemoval = true)
+    val mediaList: MutableList<ProductMedia> = mutableListOf(),
+
+    @OneToMany(mappedBy = "product", cascade = [CascadeType.ALL], orphanRemoval = true)
+    val skuList: MutableList<Sku> = mutableListOf()
+) : AuditableEntity()
