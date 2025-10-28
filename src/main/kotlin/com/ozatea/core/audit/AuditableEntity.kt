@@ -3,6 +3,8 @@ package com.ozatea.core.audit
 import jakarta.persistence.Column
 import jakarta.persistence.EntityListeners
 import jakarta.persistence.MappedSuperclass
+import org.hibernate.annotations.Filter
+import org.hibernate.annotations.FilterDef
 import org.springframework.data.annotation.CreatedBy
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedBy
@@ -13,6 +15,8 @@ import java.util.*
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener::class)
+@FilterDef(name = "notDeleted", autoEnabled = true)
+@Filter(name = "notDeleted", condition = "deleted_at IS NULL")
 class AuditableEntity(
     @CreatedDate
     @Column(name = "created_at", updatable = false)
