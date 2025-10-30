@@ -40,11 +40,12 @@ class MediaController(
     @GetMapping("/{id}")
     fun getById(@PathVariable id: Long): ResponseEntity<ByteArray> {
         val media = mediaService.getById(id) ?: throw NoSuchFileException("Media not found")
-        val fileBytes = mediaService.loadFileAsBytes(media.url)
+        val fileBytes = mediaService.loadFileAsBytes(media.filepath)
         val contentType = media.mimeType
 
         return ResponseEntity.ok()
             .header("Content-Type", contentType)
+            .header("Content-Disposition", "attachment; filename=\"${media.originalFilename}\"")
             .body(fileBytes)
     }
 }

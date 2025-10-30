@@ -23,9 +23,9 @@ class MediaService(
         return mediaRepository.findById(id)
     }
 
-    fun loadFileAsBytes(url: String): ByteArray {
-        val file = File(url)
-        if (!file.exists()) throw RuntimeException("File not found at $url")
+    fun loadFileAsBytes(filepath: String): ByteArray {
+        val file = File(filepath)
+        if (!file.exists()) throw RuntimeException("File not found at $filepath")
         return file.readBytes()
     }
 
@@ -35,7 +35,7 @@ class MediaService(
         val filename = generateFilename(file.originalFilename)
 
         // save file physically
-        val url = mediaStorage.saveFile(file.inputStream, filename, mimeType)
+        val filepath = mediaStorage.saveFile(file.inputStream, filename, mimeType)
 
         val media = Media(
             filename = filename,
@@ -44,7 +44,7 @@ class MediaService(
             mimeType = mimeType,
             mediaType = mediaType,
             size = file.size,
-            url = url,
+            filepath = filepath,
             storageType = storageType.uppercase(Locale.getDefault()).let { StorageType.valueOf(it) }
         )
 
@@ -72,8 +72,14 @@ class MediaService(
     }
 
     private fun generateFilename(originalName: String?): String {
-        val ext = originalName?.substringAfterLast('.', "") ?: ""
+
         val uuid = UUID.randomUUID().toString()
-        return if (ext.isNotEmpty()) "$uuid.$ext" else uuid
+        return if (!originalName.isNullOrBlank()) {
+            val sanitizedOriginal = originalName.replace(Regex("[^a-zA-Z0-9._-]"), "_")
+            "$uuid-$sanitizedOriginal"
+        } else {
+            uuid
+        }
+
     }
 }

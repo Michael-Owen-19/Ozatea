@@ -36,7 +36,7 @@ object ProductMapper {
                     id = media.id,
                     productId = media.product.id,
                     mediaId = media.media.id,
-                    url = media.media.url,
+                    filepath = media.media.filepath,
                     filename = media.media.filename,
                     originalFilename = media.media.originalFilename,
                     mimeType = media.media.mimeType,

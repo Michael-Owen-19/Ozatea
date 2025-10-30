@@ -19,7 +19,7 @@ data class Media(
     @Column(name = "alt_text")
     val altText: String?,
 
-    val url: String,
+    val filepath: String,
 
     @Column(name = "mime_type")
     val mimeType: String,
