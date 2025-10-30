@@ -1,7 +1,7 @@
 package com.ozatea.modules.user.infrastructure.security
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.ozatea.core.constants.AuthProvider
+import com.ozatea.core.enums.AuthProvider
 import com.ozatea.modules.user.domain.RefreshToken
 import com.ozatea.modules.user.domain.RefreshTokenRepository
 import com.ozatea.modules.user.domain.UserRepository

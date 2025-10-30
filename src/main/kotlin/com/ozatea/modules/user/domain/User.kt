@@ -1,6 +1,6 @@
 package com.ozatea.modules.user.domain
 
-import com.ozatea.core.constants.AuthProvider
+import com.ozatea.core.enums.AuthProvider
 import com.ozatea.core.constants.RoleConstants
 import jakarta.persistence.*
 import org.springframework.data.annotation.CreatedDate

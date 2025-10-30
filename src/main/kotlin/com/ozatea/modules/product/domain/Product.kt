@@ -2,6 +2,7 @@ package com.ozatea.modules.product.domain
 
 import com.ozatea.core.audit.AuditableEntity
 import com.ozatea.modules.category.domain.Category
+import com.ozatea.modules.product_media.domain.ProductMedia
 import jakarta.persistence.*
 
 @Entity
@@ -19,10 +20,10 @@ data class Product(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
-    val category: Category? = null,
+    var category: Category? = null,
 
     @Column(name = "is_active")
-    val isActive: Boolean = true,
+    var isActive: Boolean = true,
 
     @OneToMany(mappedBy = "product", cascade = [CascadeType.ALL], orphanRemoval = true)
     val mediaList: MutableList<ProductMedia> = mutableListOf(),

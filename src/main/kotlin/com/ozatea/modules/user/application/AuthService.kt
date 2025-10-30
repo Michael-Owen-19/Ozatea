@@ -1,6 +1,6 @@
 package com.ozatea.modules.user.application
 
-import com.ozatea.core.constants.AuthProvider
+import com.ozatea.core.enums.AuthProvider
 import com.ozatea.core.constants.ErrorMessage
 import com.ozatea.modules.user.domain.RefreshToken
 import com.ozatea.modules.user.domain.RefreshTokenRepository

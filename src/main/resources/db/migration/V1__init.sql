@@ -75,15 +75,33 @@ CREATE TABLE product (
     deleted_by UUID
 );
 
+CREATE TABLE media (
+    id BIGSERIAL PRIMARY KEY,
+    filename VARCHAR(255) NOT NULL,
+    original_filename VARCHAR(255) NOT NULL,
+    alt_text VARCHAR(255),
+    url TEXT NOT NULL,
+    mime_type VARCHAR(100) NOT NULL,
+    media_type VARCHAR(50) NOT NULL,
+    size BIGINT NOT NULL,
+    storage_type VARCHAR(20) NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    created_by UUID,
+    updated_at TIMESTAMP DEFAULT NOW(),
+    updated_by UUID,
+    deleted_at TIMESTAMP,
+    deleted_by UUID
+);
+
 -- ===========================================================
 -- PRODUCT MEDIA (images/videos)
 -- ===========================================================
 CREATE TABLE product_media (
     id BIGSERIAL PRIMARY KEY,
     product_id BIGINT REFERENCES product(id) ON DELETE CASCADE,
-    media_type VARCHAR(20) CHECK (media_type IN ('image', 'video')) NOT NULL,
-    url TEXT NOT NULL,
     is_thumbnail BOOLEAN DEFAULT FALSE,
+    media_id BIGINT REFERENCES media(id) ON DELETE SET NULL,
+    order_index INT DEFAULT 0,
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW(),
@@ -346,3 +364,4 @@ CREATE TABLE post_like (
     updated_by UUID,
     deleted_by UUID
 );
+

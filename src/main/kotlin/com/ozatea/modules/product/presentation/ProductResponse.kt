@@ -1,5 +1,7 @@
 package com.ozatea.modules.product.presentation
 
+import com.ozatea.modules.product.domain.Product
+import com.ozatea.modules.product_media.presentation.ProductMediaResponse
 import java.math.BigDecimal
 import java.time.Instant
 
@@ -14,20 +16,19 @@ data class ProductResponse(
     val skuList: List<SkuResponse> = emptyList(),
     val createdAt: Instant?,
     val updatedAt: Instant?
-)
+) {
+    fun toProduct() = Product(
+        id = id,
+        name = name,
+        description = description,
+        slug = slug,
+    )
+}
 
 data class CategorySummary(
     val id: Int,
     val name: String,
     val slug: String
-)
-
-data class ProductMediaResponse(
-    val id: Int,
-    val url: String,
-    val mediaType: String,
-    val isThumbnail: Boolean,
-    val isActive: Boolean
 )
 
 data class SkuResponse(

@@ -17,27 +17,26 @@ import java.util.*
 @EntityListeners(AuditingEntityListener::class)
 @FilterDef(name = "notDeleted", autoEnabled = true)
 @Filter(name = "notDeleted", condition = "deleted_at IS NULL")
-class AuditableEntity(
+abstract class AuditableEntity {
     @CreatedDate
     @Column(name = "created_at", updatable = false)
-    var createdAt: Instant? = null,
+    var createdAt: Instant? = null
 
     @CreatedBy
     @Column(name = "created_by")
-    var createdBy: UUID? = null,
+    var createdBy: UUID? = null
 
     @LastModifiedDate
     @Column(name = "updated_at")
-    var updatedAt: Instant? = null,
+    var updatedAt: Instant? = null
 
     @LastModifiedBy
     @Column(name = "updated_by")
-    var updatedBy: UUID? = null,
-
+    var updatedBy: UUID? = null
 
     @Column(name = "deleted_at")
-    var deletedAt: Instant? = null,
+    var deletedAt: Instant? = null
 
     @Column(name = "deleted_by")
     var deletedBy: UUID? = null
-)
+}

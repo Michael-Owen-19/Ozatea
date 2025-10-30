@@ -34,4 +34,10 @@ class ProductController(
         productService.deleteById(id)
         return ResponseEntity.ok(ApiResponse.success(message = "Product deleted"))
     }
+
+    @PutMapping("/{id}")
+    fun update(@PathVariable id: Long, @RequestBody request: ProductRequest): ResponseEntity<ApiResponse<ProductResponse>> {
+        val updatedProduct = productService.update(id, request)
+        return ResponseEntity.ok(ApiResponse.success(updatedProduct, "Product updated successfully"))
+    }
 }

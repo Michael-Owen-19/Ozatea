@@ -1,6 +1,6 @@
 package com.ozatea.modules.user.infrastructure.security
 
-import com.ozatea.core.constants.AuthProvider
+import com.ozatea.core.enums.AuthProvider
 import com.ozatea.modules.user.domain.User
 import com.ozatea.modules.user.domain.UserRepository
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest

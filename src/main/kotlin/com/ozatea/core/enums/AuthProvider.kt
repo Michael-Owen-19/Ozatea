@@ -1,4 +1,4 @@
-package com.ozatea.core.constants
+package com.ozatea.core.enums
 
 enum class AuthProvider {
     LOCAL,

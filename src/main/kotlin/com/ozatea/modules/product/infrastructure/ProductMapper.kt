@@ -3,6 +3,7 @@ package com.ozatea.modules.product.infrastructure
 import com.ozatea.modules.category.domain.Category
 import com.ozatea.modules.product.domain.Product
 import com.ozatea.modules.product.presentation.*
+import com.ozatea.modules.product_media.presentation.ProductMediaResponse
 
 object ProductMapper {
 
@@ -11,8 +12,7 @@ object ProductMapper {
             name = request.name,
             description = request.description,
             slug = request.slug,
-            category = category,
-            isActive = request.isActive
+            category = category
         )
         return product
     }
@@ -34,8 +34,14 @@ object ProductMapper {
             mediaList = product.mediaList.map { media ->
                 ProductMediaResponse(
                     id = media.id,
-                    url = media.url,
-                    mediaType = media.mediaType,
+                    productId = media.product.id,
+                    mediaId = media.media.id,
+                    url = media.media.url,
+                    filename = media.media.filename,
+                    originalFilename = media.media.originalFilename,
+                    mimeType = media.media.mimeType,
+                    mediaType = media.media.mediaType,
+                    altText = media.media.altText,
                     isThumbnail = media.isThumbnail,
                     isActive = media.isActive
                 )

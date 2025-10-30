@@ -8,7 +8,6 @@ import com.ozatea.modules.product.infrastructure.ProductMapper
 import com.ozatea.modules.product.presentation.ProductRequest
 import com.ozatea.modules.product.presentation.ProductResponse
 import jakarta.persistence.EntityNotFoundException
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -46,5 +45,22 @@ class ProductService(
             throw EntityNotFoundException("Product not found: $id")
         }
         repository.deleteById(id)
+    }
+
+    @Transactional
+    fun update(id: Long, request: ProductRequest): ProductResponse {
+        val existingProduct = repository.findById(id) ?: throw EntityNotFoundException("Product not found: $id")
+        val categoryUpdate = request.categoryId?.let {
+            categoryRepository.findById(it)
+                ?: throw EntityNotFoundException("Category not found: $it")
+        }
+        val updatedProduct = existingProduct.apply {
+            name = request.name
+            description = request.description
+            category = categoryUpdate
+            slug = request.slug
+        }
+        val saved = repository.save(updatedProduct)
+        return ProductMapper.toResponse(saved)
     }
 }
