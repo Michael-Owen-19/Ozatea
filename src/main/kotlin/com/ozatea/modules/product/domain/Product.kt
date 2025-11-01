@@ -3,6 +3,7 @@ package com.ozatea.modules.product.domain
 import com.ozatea.core.audit.AuditableEntity
 import com.ozatea.modules.category.domain.Category
 import com.ozatea.modules.product_media.domain.ProductMedia
+import com.ozatea.modules.sku.domain.Sku
 import jakarta.persistence.*
 
 @Entity

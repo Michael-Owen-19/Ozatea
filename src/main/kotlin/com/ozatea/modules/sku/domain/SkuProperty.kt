@@ -1,6 +1,7 @@
-package com.ozatea.modules.product.domain
+package com.ozatea.modules.sku.domain
 
 import com.ozatea.core.audit.AuditableEntity
+import com.ozatea.modules.property.domain.PropertyAttribute
 import jakarta.persistence.*
 
 @Entity

@@ -1,4 +1,4 @@
-package com.ozatea.modules.product.domain
+package com.ozatea.modules.property.domain
 
 import com.ozatea.core.audit.AuditableEntity
 import jakarta.persistence.*
@@ -7,7 +7,7 @@ import jakarta.persistence.*
 @Table(name = "property_attribute")
 data class PropertyAttribute(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Int = 0,
+    val id: Long = 0,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "property_id")

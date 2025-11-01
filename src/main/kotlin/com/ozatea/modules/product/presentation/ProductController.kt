@@ -1,7 +1,10 @@
 package com.ozatea.modules.product.presentation
 
 import com.ozatea.core.response.ApiResponse
+import com.ozatea.core.response.PaginatedResponse
 import com.ozatea.modules.product.application.ProductService
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -18,8 +21,8 @@ class ProductController(
     }
 
     @GetMapping
-    fun getAll(): ResponseEntity<ApiResponse<List<ProductResponse>>> {
-        val products = productService.findAll()
+    fun getAll(pageable: Pageable): ResponseEntity<ApiResponse<PaginatedResponse<ProductResponse>>> {
+        val products = productService.findAll(pageable)
         return ResponseEntity.ok(ApiResponse.success(products, "Fetched all products"))
     }
 

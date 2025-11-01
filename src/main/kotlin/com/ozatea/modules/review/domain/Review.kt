@@ -1,7 +1,7 @@
 package com.ozatea.modules.review.domain
 
 import com.ozatea.core.audit.AuditableEntity
-import com.ozatea.modules.product.domain.Sku
+import com.ozatea.modules.sku.domain.Sku
 import com.ozatea.modules.user.domain.User
 import jakarta.persistence.*
 

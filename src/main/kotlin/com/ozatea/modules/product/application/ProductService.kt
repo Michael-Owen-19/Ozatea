@@ -1,5 +1,7 @@
 package com.ozatea.modules.product.application
 
+import com.ozatea.core.pagination.toPaginatedResponse
+import com.ozatea.core.response.PaginatedResponse
 import com.ozatea.modules.category.domain.CategoryRepository
 import com.ozatea.modules.product.domain.ProductRepository
 import com.ozatea.modules.product.domain.event.ProductCreatedEvent
@@ -8,6 +10,7 @@ import com.ozatea.modules.product.infrastructure.ProductMapper
 import com.ozatea.modules.product.presentation.ProductRequest
 import com.ozatea.modules.product.presentation.ProductResponse
 import jakarta.persistence.EntityNotFoundException
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -17,7 +20,6 @@ class ProductService(
     private val categoryRepository: CategoryRepository,
     private val eventPublisher: ProductEventPublisher
 ) {
-
     @Transactional
     fun create(request: ProductRequest): ProductResponse {
         val category = request.categoryId?.let {
@@ -30,8 +32,8 @@ class ProductService(
         return ProductMapper.toResponse(saved)
     }
 
-    fun findAll(): List<ProductResponse> {
-        return repository.findAll().map { ProductMapper.toResponse(it) }
+    fun findAll(pageable: Pageable): PaginatedResponse<ProductResponse> {
+        return repository.findAll(pageable).toPaginatedResponse(ProductMapper::toResponse)
     }
 
     fun findById(id: Long): ProductResponse {

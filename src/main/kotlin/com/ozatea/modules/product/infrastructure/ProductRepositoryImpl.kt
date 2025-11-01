@@ -2,6 +2,8 @@ package com.ozatea.modules.product.infrastructure
 
 import com.ozatea.modules.product.domain.Product
 import com.ozatea.modules.product.domain.ProductRepository
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Component
 
@@ -16,8 +18,8 @@ class ProductRepositoryImpl(
     override fun save(product: Product): Product =
         jpaRepository.save(product)
 
-    override fun findAll(): List<Product> =
-        jpaRepository.findAll()
+    override fun findAll(pageable: Pageable): Page<Product> =
+        jpaRepository.findAll(pageable)
 
     override fun deleteById(id: Long) {
         jpaRepository.deleteById(id)

@@ -41,7 +41,7 @@ data class SkuResponse(
 )
 
 data class SkuPropertyResponse(
-    val propertyAttributeId: Int,
+    val propertyAttributeId: Long,
     val propertyTitle: String,
     val propertyValue: String
 )
